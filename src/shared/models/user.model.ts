@@ -32,7 +32,7 @@ export class User extends Model<User> {
           type: DataType.BOOLEAN,
           defaultValue: true,
      })
-     isActive: boolean;
+     IsActive: boolean;
 
      @CreatedAt
      @Column({
