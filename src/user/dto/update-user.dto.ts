@@ -11,13 +11,13 @@ export class UpdateUserDto {
   @IsString()
   mobileNumber?: string;
 
-  readonly UserId?: number;
+  // readonly UserId?: number;
 
-  readonly EmailId?: string;
+  // readonly EmailId?: string;
 
-  readonly Password?: string;
+  // readonly Password?: string;
 
-  readonly MobileNo?: string;
+  // readonly MobileNo?: string;
 
 
   // You can add other fields here that are updateable (like email, name, etc.)

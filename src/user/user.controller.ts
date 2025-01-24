@@ -139,6 +139,7 @@ import {
   HttpException,
   HttpStatus,
   Patch,
+  Put,
 } from '@nestjs/common';
 import { UserService } from './user.service'; // Correct Import for UserService
 import { CreateUserDto } from './dto/create-user.dto';
@@ -224,7 +225,7 @@ export class UserController {
     }
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     try {
       const updatedUser = await this.userService.update(Number(id), updateUserDto);

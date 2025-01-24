@@ -77,6 +77,7 @@ export class UserService {
     return user;
   }
 
+  // Update user by ID
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.userModel.findOne({ where: { UserId: id } });
     if (!user) {
