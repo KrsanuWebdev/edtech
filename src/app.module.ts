@@ -7,6 +7,7 @@ import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { DatabaseConfigService } from './shared/services/database.config.service';
+import { CourseModule } from './course/course.module';
 
 
 @Module({
@@ -19,6 +20,8 @@ import { DatabaseConfigService } from './shared/services/database.config.service
                imports: [ConfigModule],
                useClass: DatabaseConfigService,
           }),
+
+          CourseModule,
         
      ],
      controllers: [AppController],
