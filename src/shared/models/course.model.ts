@@ -22,8 +22,8 @@ export class Course extends Model<Course> {
   @Column({ type: DataType.STRING })
   Description: string;
 
-  @Column({ type: DataType.STRING })
-  CreatorId: string;
+  @Column({ type: DataType.INTEGER })
+  CreatorId: number;
 
   @Column({ type: DataType.STRING })
   Category: string;
