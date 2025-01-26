@@ -8,6 +8,9 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { DatabaseConfigService } from './shared/services/database.config.service';
 import { UserModule } from './user/user.module';
+import { CourseModule } from './course/course.module';
+import { LessonModule } from './lesson/lesson.module';
+import { UserprogressModule } from './userprogress/userprogress.module';
 
 
 @Module({
@@ -22,6 +25,9 @@ import { UserModule } from './user/user.module';
           }),
 
           UserModule,
+          CourseModule,
+          LessonModule,
+          UserprogressModule,
         
      ],
      controllers: [AppController],

@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
 
-// import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 // let server: Handler;
 
@@ -32,7 +32,7 @@ async function bootstrap() {
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
   app.enableCors();
-  //  await configureSwagger(app);
+   await configureSwagger(app);
   await app.listen(3500, () => {
     console.log('server run on port 3500');
   });
@@ -40,4 +40,31 @@ async function bootstrap() {
 
 if (process.env.NODE_ENV == 'dev') {
   bootstrap();
+}
+
+async function configureSwagger(app: any) {
+  if (process.env.SWAGGERUI == 'enable') {
+       const options = new DocumentBuilder()
+            .setTitle('Nest REST API Dmrat-Backend')
+            .setDescription('Nest REST API Dmrat-Backend Description')
+            .setVersion('1.0')
+
+            .addBearerAuth(
+                 {
+                      name: 'access-token',
+                      in: 'header',
+                      type: 'apiKey',
+                 },
+                 'access-token',
+            )
+            .build();
+       const document = SwaggerModule.createDocument(app, options);
+       document.tags = [
+            { name: 'App', description: "Application Core API'S" },
+            // { name: 'Authentication', description: "Authentication API'S" },
+       ];
+
+       // app.use('/swagger', new SwaggerAuthMiddleware().use);
+       SwaggerModule.setup('swagger', app, document);
+  }
 }

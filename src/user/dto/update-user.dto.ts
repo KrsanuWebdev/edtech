@@ -1,24 +1,24 @@
-// import { PartialType } from '@nestjs/mapped-types';
-// import { CreateUserDto } from './create-user.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import {  IsString, IsBoolean, IsOptional } from 'class-validator';
 
-// export class UpdateUserDto extends PartialType(CreateUserDto) {}
-
-
-import { IsString, IsOptional } from 'class-validator';
-
-export class UpdateUserDto {
-  @IsOptional()  // Optional field for update
+export class UpdateUserDto{
+  @ApiProperty()
+  @IsOptional()
   @IsString()
-  mobileNumber?: string;
+  EmailId: string;
 
-  // readonly UserId?: number;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  Password?: string;
 
-  // readonly EmailId?: string;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  MobileNo?: string;
 
-  // readonly Password?: string;
-
-  // readonly MobileNo?: string;
-
-
-  // You can add other fields here that are updateable (like email, name, etc.)
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  IsActive: boolean;
 }

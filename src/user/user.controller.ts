@@ -145,11 +145,11 @@ import { UserService } from './user.service'; // Correct Import for UserService
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-@Controller('user')
+@Controller('/')
 export class UserController {
   constructor(private readonly userService: UserService) {} // Inject UserService
 
-  @Post()
+  @Post('user')
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       const newUser = await this.userService.create(createUserDto);
@@ -169,7 +169,7 @@ export class UserController {
     }
   }
 
-  @Get()
+  @Get('users')
   async findAll() {
     try {
       const users = await this.userService.findAll();
@@ -196,7 +196,7 @@ export class UserController {
     }
   }
 
-  @Get(':id')
+  @Get('user/:id')
   async findOne(@Param('id') id: string) {
     try {
       const data = await this.userService.findOne(+id);
@@ -245,7 +245,7 @@ export class UserController {
     }
   }
 
-  @Delete(':id')
+  @Delete('user/:id')
   async remove(@Param('id') id: string) {
     try {
       await this.userService.remove(Number(id));

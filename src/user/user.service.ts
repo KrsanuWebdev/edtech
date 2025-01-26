@@ -1,50 +1,3 @@
-
-// import { Injectable, HttpException } from '@nestjs/common';
-// import { InjectModel } from '@nestjs/sequelize';  // Assuming you're using Sequelize ORM
-// import { User } from '../shared/models/user.model';  // Import the User model
-// import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
-
-// @Injectable()
-// export class UserService {
-//   constructor(
-//     @InjectModel(User) private readonly userModel: typeof User,  // Inject the User model
-//   ) {}
-
-//   async create(createUserDto: CreateUserDto) {
-//     return await this.userModel.create(createUserDto);  // Create user logic
-//   }
-
-//   async findAll() {
-//     return await this.userModel.findAll();  // Retrieve all users
-//   }
-
-//   async findOne(id: number) {
-//     return await this.userModel.findOne({ where: { UserId: id } });   // Retrieve a user by ID
-//   }
-
-
-
-//   async update(id: number, UpdateUserDto: UpdateUserDto) {
-//     const user = await this.userModel.findOne({ where: { UserId: id } }); // Use UserId instead of id
-//     if (!user) {
-//       throw new Error('User  not found');  // Handle user not found case
-//     }
-//     return await user.update(UpdateUserDto);  // Update the user with the provided data
-//   }
-
-
-//   async remove(id: number) {
-//     const user = await this.userModel.findOne({ where: { UserId: id } });
-//     if (!user) {
-//       throw new Error('User not found');  // Handle user not found case
-//     }
-//     await user.destroy();  // Delete the user
-//   }
-// }
-
-
-
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize'; // Assuming you're using Sequelize ORM
 import { User } from '../shared/models/user.model'; // Import the User model
@@ -54,15 +7,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User) private readonly userModel: typeof User, // Inject the User model
-  ) {}
+    @InjectModel(User) private readonly userModel: typeof User,) { }
 
   async create(createUserDto: CreateUserDto) {
-    return await this.userModel.create(createUserDto); // Create user logic
+    return await this.userModel.create(createUserDto); 
   }
 
   async findAll() {
-    const users = await this.userModel.findAll(); // Retrieve all users
+    const users = await this.userModel.findAll(); 
     return users;
   }
 
@@ -96,16 +48,19 @@ export class UserService {
     }
   }
 
+
+
+
   async remove(id: number) {
-    const user = await this.userModel.findOne({ where: { UserId: id } });
-    if (!user) {
-      throw new HttpException(
-        `User with ID ${id} not found`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
     try {
-      await user.destroy();
+      const user = await this.userModel.findOne({ where: { UserId: id } });
+      if (!user || !user.IsActive) {
+        throw new HttpException(
+          `User with ID ${id} not found or already inactive`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      await user.update({ IsActive: false });
       return { message: 'User deleted successfully' };
     } catch (error) {
       throw new HttpException(
