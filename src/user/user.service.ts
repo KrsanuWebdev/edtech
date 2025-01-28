@@ -1,72 +1,84 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize'; // Assuming you're using Sequelize ORM
 import { User } from '../shared/models/user.model'; // Import the User model
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { response } from 'express';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User) private readonly userModel: typeof User,) { }
 
-  async create(createUserDto: CreateUserDto) {
-    return await this.userModel.create(createUserDto); 
-  }
-
-  async findAll() {
-    const users = await this.userModel.findAll(); 
-    return users;
-  }
-
-  async findOne(id: number) {
-    const user = await this.userModel.findOne({ where: { UserId: id } });
-    if (!user) {
-      throw new HttpException(
-        `User with ID ${id} not found`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return user;
-  }
-
-  // Update user by ID
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.userModel.findOne({ where: { UserId: id } });
-    if (!user) {
-      throw new HttpException(
-        `User with ID ${id} not found`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+  public async createUser(createUserDto: CreateUserDto) {
     try {
-      return await user.update(updateUserDto);
+      const user = await this.userModel.create(createUserDto);
+      const response = {
+        message: 'User created successfully',
+        data: user,
+      };
+      return response;
     } catch (error) {
-      throw new HttpException(
-        `Failed to update user: ${error.message}`,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw error;
     }
   }
 
-
-
-
-  async remove(id: number) {
+  public async findAllUsers() {
     try {
-      const user = await this.userModel.findOne({ where: { UserId: id } });
+      const users = await this.userModel.findAll();
+      const response = {
+        message: 'Users retrieved successfully',
+        data: users,
+      };
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async findUserById(UserId: number) {
+    try {
+      const user = await this.userModel.findOne({ where: { UserId: UserId } });
+      return {
+        message: user ? 'User fetched successfully.' : 'User not found',
+        data: user,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async updateuserById(UserId: number, updateUserDto: UpdateUserDto) {
+    try {
+      const user = await this.userModel.findOne({ where: { UserId: UserId } });
       if (!user || !user.IsActive) {
-        throw new HttpException(
-          `User with ID ${id} not found or already inactive`,
-          HttpStatus.NOT_FOUND,
-        );
+        throw new NotFoundException('User not found by user Id ');
+      }
+      await user.update(updateUserDto);
+      return {
+        message: 'User updated successfully.',
+        data: user,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async deleteUserById(UserId: number) {
+    try {
+      const user = await this.userModel.findOne({ where: { UserId: UserId } });
+      if (!user || !user.IsActive) {
+        throw new NotFoundException('User not found by user Id');
       }
       await user.update({ IsActive: false });
-      return { message: 'User deleted successfully' };
+      return {
+        message: 'User deleted successfully',
+        data: user,
+      };
     } catch (error) {
-      throw new HttpException(
-        `Failed to delete user: ${error.message}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
     }
   }
+
+
 }

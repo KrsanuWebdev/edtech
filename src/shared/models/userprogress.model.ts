@@ -11,9 +11,9 @@ import {
   } from 'sequelize-typescript';
   import { Course } from './course.model';
   import { Lesson } from './lesson.model';
-  import { User } from './user.model'; // Assuming you have a User model
+  import { User } from './user.model'; 
   
-  @Table
+  @Table({timestamps: true})
   export class UserProgress extends Model<UserProgress> {
     @PrimaryKey
     @AutoIncrement
