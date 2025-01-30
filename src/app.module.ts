@@ -7,7 +7,10 @@ import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { DatabaseConfigService } from './shared/services/database.config.service';
+import { UserModule } from './user/user.module';
 import { CourseModule } from './course/course.module';
+import { LessonModule } from './lesson/lesson.module';
+import { UserprogressModule } from './userprogress/userprogress.module';
 
 
 @Module({
@@ -21,7 +24,10 @@ import { CourseModule } from './course/course.module';
                useClass: DatabaseConfigService,
           }),
 
+          UserModule,
           CourseModule,
+          LessonModule,
+          UserprogressModule,
         
      ],
      controllers: [AppController],
@@ -39,3 +45,4 @@ import { CourseModule } from './course/course.module';
      exports: [],
 })
 export class AppModule {}
+
