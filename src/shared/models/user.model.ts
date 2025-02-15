@@ -6,7 +6,8 @@ import {
      PrimaryKey, 
      AutoIncrement, 
      CreatedAt, 
-     UpdatedAt 
+     UpdatedAt, 
+     AllowNull
    } from 'sequelize-typescript';
    
    @Table({ tableName: 'users', timestamps: true })
@@ -18,6 +19,12 @@ import {
      })
      UserId: number;
    
+     @Column({
+      type: DataType.STRING,
+      allowNull: false,
+     })
+      UserName: string;
+
      @Column({
        type: DataType.STRING,
        allowNull: false,

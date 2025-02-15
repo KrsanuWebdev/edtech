@@ -6,7 +6,7 @@ import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class CourseService {
-  constructor(@InjectModel(Course) private _courseModel: typeof Course) {}
+  constructor(@InjectModel(Course) private _courseModel: typeof Course) { }
 
   public async createCourse(createCourseDto: CreateCourseDto) {
     try {
@@ -21,66 +21,68 @@ export class CourseService {
     }
   }
 
- public async findAllCourses() {
-   try {
-    const {count:total, rows:courses} = await this._courseModel.findAndCountAll()
-    const response = {
-      message : courses?'List of courses fetched successfully.':'Course not found',
-      data:{
-        total,
-        courses
+  public async findAllCourses() {
+    try {
+      const { count: total, rows: courses } = await this._courseModel.findAndCountAll()
+      const response = {
+        message: courses ? 'List of courses fetched successfully.' : 'Course not found',
+        data: {
+          total,
+          courses
+        }
       }
+      return response;
+    } catch (error) {
+      throw error;
     }
-    return response;
-   } catch (error) {
-    throw error;
-   }
   }
 
   public async findCourseById(CourseId: number) {
-   try {
-    const course = await this._courseModel.findByPk(CourseId)
-    const response = {
-      message : course?'Course fetched successfully.':'Course not found',
-      data:course
+    try {
+      const course = await this._courseModel.findByPk(CourseId)
+      if (!course || !course.IsActive) {
+        throw new NotFoundException(`Course not found by course Id ${CourseId}`)
+      }
+      const response = {
+        message: 'Couuse fetched successfully.',
+        data: course
+      }
+      return response;
+    } catch (error) {
+      throw error;
     }
-    return response;
-   } catch (error) {
-    throw error;
-   }
   }
 
- public async updateCourseById(CourseId: number, updateCourseDto: UpdateCourseDto) {
-   try {
-    const course = await this._courseModel.findByPk(CourseId)
-    if(!course || !course.IsActive){
-      throw new NotFoundException('Course not found by course Id')
+  public async updateCourseById(CourseId: number, updateCourseDto: UpdateCourseDto) {
+    try {
+      const course = await this._courseModel.findByPk(CourseId)
+      if (!course || !course.IsActive) {
+        throw new NotFoundException(`Course not found by course Id ${CourseId}`)
+      }
+      await course.update(updateCourseDto);
+      const response = {
+        message: 'Course updated sucessfully. ',
+        data: course
+      }
+      return response;
+    } catch (error) {
+      throw error;
     }
-
-    await course.update(updateCourseDto);
-    const response = {
-      message : 'Course updsted sucessfully. ',
-      data:course
-    }
-    return response;
-   } catch (error) {
-    throw error;
-   }
   }
 
- public async  deleteCourseById(CourseId: number) {
-   try {
-    const course = await this._courseModel.findByPk(CourseId)
-    if(!course || !course.IsActive){
-      throw new NotFoundException('Course not found by course Id')
+  public async deleteCourseById(CourseId: number) {
+    try {
+      const course = await this._courseModel.findByPk(CourseId)
+      if (!course || !course.IsActive) {
+        throw new NotFoundException('Course not found by course Id')
+      }
+      course.update({ IsActive: false })
+      const response = {
+        message: 'Course deleted successfully.'
+      }
+      return response;
+    } catch (error) {
+      throw error;
     }
-    course.update({IsActive:false})
-    const response = {
-      message: 'Course deleted successfully.'
-    }
-    return response;
-   } catch (error) {
-    throw error;
-   }
   }
 }

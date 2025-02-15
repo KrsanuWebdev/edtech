@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize'; // Assuming you're using Sequelize ORM
 import { User } from '../shared/models/user.model'; // Import the User model
 import { CreateUserDto } from './dto/create-user.dto';

@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { CourseModule } from './course/course.module';
 import { LessonModule } from './lesson/lesson.module';
 import { UserprogressModule } from './userprogress/userprogress.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -28,6 +29,7 @@ import { UserprogressModule } from './userprogress/userprogress.module';
           CourseModule,
           LessonModule,
           UserprogressModule,
+          AuthModule,
         
      ],
      controllers: [AppController],
