@@ -3,6 +3,7 @@ import { CreateLessonDto, UpdateLessonDto } from './dto';
 import { Lesson } from '../shared/models/lesson.model';
 import { Course } from '../shared/models/course.model';
 import { InjectModel } from '@nestjs/sequelize';
+import { PaginationDto } from 'src/shared/dto/pagination.dto';
 
 
 @Injectable()
@@ -30,15 +31,30 @@ export class LessonService {
     }
   }
 
-  public async findAllLessons() {
+  public async findAllLessons(paginationDto:PaginationDto) {
     try {
-      const lessons = await this._lessonModel.findAll();
+      const { Page = 1, Limit = 10, Pagination = true } = paginationDto;
+      const offset = (Page - 1) * Limit;
+      const limit = Limit;
+
+      const {count:total, rows:lessons} = await this._lessonModel.findAndCountAll({
+        limit: Pagination ? limit : undefined,
+        offset: Pagination ? offset : undefined,  
+      });
+      const totalPages = Pagination ? Math.ceil(total / Limit) : 1;
+
       const response = {
-        message: lessons ? 'List of lessons fetched successfully.' : 'Lesson not found',
+        message: lessons.length > 0
+        ? 'List of lessons fetched successfully.' 
+        : 'Lesson not found',
         data: {
+          total,
+          totalPages,
+          currentPage: Page,
+          perPage: Limit,
           lessons,
         }
-      }
+      };
       return response;
     } catch (error) {
       throw error;

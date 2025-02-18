@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Course } from 'src/shared/models';
-
 import { CreateCourseDto, UpdateCourseDto } from './dto';
+import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
@@ -21,16 +21,31 @@ export class CourseService {
     }
   }
 
-  public async findAllCourses() {
+  public async findAllCourses(paginationDto: PaginationDto) {
     try {
-      const { count: total, rows: courses } = await this._courseModel.findAndCountAll()
+      const { Page = 1, Limit = 10, Pagination = true } = paginationDto;
+      const offset = (Page - 1) * Limit;
+      const limit = Limit;
+
+      const { count: total, rows: courses } = await this._courseModel.findAndCountAll({
+        limit: Pagination ? limit : undefined,  // Apply limit only if pagination is enabled
+        offset: Pagination ? offset : undefined // Apply offset only if pagination is enabled
+      });
+
+      const totalPages = Pagination ? Math.ceil(total / Limit) : 1;
+
       const response = {
-        message: courses ? 'List of courses fetched successfully.' : 'Course not found',
+        message: courses.length > 0 
+        ? 'List of courses fetched successfully.'
+         : 'Course not found',
         data: {
           total,
-          courses
+          totalPages,
+          currentPage: Page,
+          perPage: Limit,
+          courses,
         }
-      }
+      };
       return response;
     } catch (error) {
       throw error;
@@ -74,7 +89,7 @@ export class CourseService {
     try {
       const course = await this._courseModel.findByPk(CourseId)
       if (!course || !course.IsActive) {
-        throw new NotFoundException('Course not found by course Id')
+        throw new NotFoundException(`Course not found by course Id ${CourseId}`)
       }
       course.update({ IsActive: false })
       const response = {
